@@ -1,8 +1,8 @@
 name: kavinsky/lua-serializer
 on: [push, pull_request]
 jobs:
-  clover-merge:
-    name: clover-merge test (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
+  lua-serializer:
+    name: kavinsky/lua-serializer build (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
