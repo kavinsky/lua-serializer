@@ -1,21 +1,24 @@
 <?php
 
-namespace Vlaswinkel\Lua\Tests;
+namespace Kavinsky\Lua\Tests;
 
-use Vlaswinkel\Lua\InputStream;
-use Vlaswinkel\Lua\Lua;
-use Vlaswinkel\Lua\ParseException;
-use Vlaswinkel\Lua\Token;
-use Vlaswinkel\Lua\TokenStream;
+use Kavinsky\Lua\InputStream;
+use Kavinsky\Lua\Lua;
+use Kavinsky\Lua\ParseException;
+use Kavinsky\Lua\Token;
+use Kavinsky\Lua\TokenStream;
 
 /**
  * Class LuaTokenStreamTest
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua\Tests
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua\Tests
  */
-class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
-    public function testDoubleQuotedString() {
+class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase
+{
+    public function testDoubleQuotedString()
+    {
         $obj = new TokenStream(new InputStream('"foo"'));
 
         $token = $obj->next();
@@ -23,7 +26,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("foo", $token->getValue());
     }
 
-    public function testSingleQuotedString() {
+    public function testSingleQuotedString()
+    {
         $obj = new TokenStream(new InputStream("'foo'"));
 
         $token = $obj->next();
@@ -31,7 +35,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("foo", $token->getValue());
     }
 
-    public function testNestedString() {
+    public function testNestedString()
+    {
         $obj = new TokenStream(new InputStream("[=[ Like this ]=]"));
 
         $token = $obj->next();
@@ -39,7 +44,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(' Like this ', $token->getValue());
     }
 
-    public function testEscapedString() {
+    public function testEscapedString()
+    {
         $obj = new TokenStream(new InputStream('" test \n\r\t\v\\\\\""'));
 
         $token = $obj->next();
@@ -47,7 +53,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(" test \n\r\t\v\\\"", $token->getValue());
     }
 
-    public function testOtherNestedString() {
+    public function testOtherNestedString()
+    {
         $obj = new TokenStream(new InputStream('[=[one [[two]] one]=]'));
 
         $token = $obj->next();
@@ -55,7 +62,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('one [[two]] one', $token->getValue());
     }
 
-    public function testNestedNestedString() {
+    public function testNestedNestedString()
+    {
         $obj = new TokenStream(new InputStream('[=[one [==[two]==] one]=]'));
 
         $token = $obj->next();
@@ -63,7 +71,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('one [==[two]==] one', $token->getValue());
     }
 
-    public function testComplexNestedString() {
+    public function testComplexNestedString()
+    {
         $obj = new TokenStream(new InputStream('[===[one [ [==[ one]===]'));
 
         $token = $obj->next();
@@ -71,7 +80,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('one [ [==[ one', $token->getValue());
     }
 
-    public function testNumberInt() {
+    public function testNumberInt()
+    {
         $obj = new TokenStream(new InputStream("1337"));
 
         $token = $obj->next();
@@ -79,7 +89,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(1337, $token->getValue());
     }
 
-    public function testNumberFloat() {
+    public function testNumberFloat()
+    {
         $obj = new TokenStream(new InputStream("13.37"));
 
         $token = $obj->next();
@@ -87,7 +98,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(13.37, $token->getValue());
     }
 
-    public function testNumberNegative() {
+    public function testNumberNegative()
+    {
         $obj = new TokenStream(new InputStream("-13.37"));
 
         $token = $obj->next();
@@ -97,7 +109,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($obj->next());
     }
 
-    public function testNumberHex() {
+    public function testNumberHex()
+    {
         $obj = new TokenStream(new InputStream('0x0ef15a66'));
 
         $token = $obj->next();
@@ -107,7 +120,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($obj->next());
     }
 
-    public function testPunctuation() {
+    public function testPunctuation()
+    {
         foreach ([',', '{', '}', '=', '[', ']'] as $punc) {
             $obj = new TokenStream(new InputStream($punc));
 
@@ -117,7 +131,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
-    public function testIdentifier() {
+    public function testIdentifier()
+    {
         $obj = new TokenStream(new InputStream("foo"));
 
         $token = $obj->next();
@@ -125,7 +140,8 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('foo', $token->getValue());
     }
 
-    public function testKeyword() {
+    public function testKeyword()
+    {
         foreach (Lua::$luaKeywords as $keyword) {
             $obj = new TokenStream(new InputStream($keyword));
 
@@ -136,37 +152,41 @@ class LuaTokenStreamTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException \Vlaswinkel\Lua\ParseException
+     * @expectedException \Kavinsky\Lua\ParseException
      * @expectedExceptionMessage Cannot handle character: * (ord: 42)
      */
-    public function testInvalidCharacter() {
+    public function testInvalidCharacter()
+    {
         $obj = new TokenStream(new InputStream("*"));
 
         $obj->next();
     }
 
     /**
-     * @expectedException \Vlaswinkel\Lua\ParseException
+     * @expectedException \Kavinsky\Lua\ParseException
      */
-    public function testUnclosedNestedString() {
+    public function testUnclosedNestedString()
+    {
         $obj = new TokenStream(new InputStream("[=[ test ]]"));
 
         $obj->next();
     }
 
     /**
-     * @expectedException \Vlaswinkel\Lua\ParseException
+     * @expectedException \Kavinsky\Lua\ParseException
      */
-    public function testInvalidDoubleBracketOpenString() {
+    public function testInvalidDoubleBracketOpenString()
+    {
         $obj = new TokenStream(new InputStream('[=== test ]===]'));
 
         $obj->next();
     }
 
     /**
-     * @expectedException \Vlaswinkel\Lua\ParseException
+     * @expectedException \Kavinsky\Lua\ParseException
      */
-    public function testInvalidDoubleBracketCloseString() {
+    public function testInvalidDoubleBracketCloseString()
+    {
         $obj = new TokenStream(new InputStream('[==[ test ]== '));
 
         $obj->next();

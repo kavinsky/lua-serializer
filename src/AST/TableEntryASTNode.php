@@ -1,14 +1,16 @@
 <?php
 
-namespace Vlaswinkel\Lua\AST;
+namespace Kavinsky\Lua\AST;
 
 /**
  * Class TableEntryASTNode
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua\AST
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua\AST
  */
-class TableEntryASTNode extends ASTNode {
+class TableEntryASTNode extends ASTNode
+{
     const NAME = 'table_entry';
 
     /**
@@ -26,7 +28,8 @@ class TableEntryASTNode extends ASTNode {
      * @param null|ASTNode $key
      * @param ASTNode      $value
      */
-    public function __construct(ASTNode $value, ASTNode $key = null) {
+    public function __construct(ASTNode $value, ASTNode $key = null)
+    {
         $this->value = $value;
         $this->key   = $key;
     }
@@ -34,28 +37,32 @@ class TableEntryASTNode extends ASTNode {
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return self::NAME;
     }
 
     /**
      * @return null|ASTNode
      */
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 
     /**
      * @return ASTNode
      */
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 
     /**
      * @return bool
      */
-    public function hasKey() {
+    public function hasKey()
+    {
         return $this->key !== null;
     }
 }

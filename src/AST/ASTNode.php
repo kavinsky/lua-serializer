@@ -1,14 +1,16 @@
 <?php
 
-namespace Vlaswinkel\Lua\AST;
+namespace Kavinsky\Lua\AST;
 
 /**
  * Class ASTNode
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua\AST
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua\AST
  */
-abstract class ASTNode {
+abstract class ASTNode
+{
     /**
      * @return string
      */

@@ -1,6 +1,11 @@
 <?php
 
-namespace Vlaswinkel\Lua;
+namespace Kavinsky\Lua;
+
+use ArrayAccess;
+use Illuminate\Contracts\Support\Arrayable;
+use Iterator;
+use Traversable;
 
 /**
  * Class Serializer
@@ -8,38 +13,47 @@ namespace Vlaswinkel\Lua;
  * @see     https://github.com/Sorroko/cclite/blob/62677542ed63bd4db212f83da1357cb953e82ce3/src/lua/rom/apis/textutils
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua
  */
-class Serializer {
-    public static function encode($data, $indent = '') {
-        if (is_null($data)) {
-            return self::encodeNull();
-        } else {
-            if (is_array($data)) {
-                return self::encodeArray($data, $indent);
-            } else {
-                if (is_object($data)) {
-                    return self::encodeArray((array)$data, $indent);
-                } else {
-                    if (is_string($data)) {
-                        return self::encodeString($data);
-                    } else {
-                        if (is_numeric($data)) {
-                            return self::encodeNumber($data);
-                        } else {
-                            if (is_bool($data)) {
-                                return self::encodeBoolean($data);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        throw new \InvalidArgumentException("Cannot encode type " . get_class($data) . ": " . var_export($data, true));
+class Serializer
+{
+    public function encode(mixed $data, $indent = ''): string
+    {
+        return match (gettype($data)) {
+            'NULL' => $this->encodeNull(),
+            'array' => $this->encodeArray((array) $data, $indent),
+            'object' => $this->encodeObject($data, $indent),
+            'string' => $this->encodeString($data),
+            'double', 'integer' => $this->encodeNumber($data),
+            'boolean' => $this->encodeBoolean($data),
+            default => throw new \InvalidArgumentException(
+                "Cannot encode type " . gettype($data) . ": " . var_export($data, true)
+            )
+        };
     }
 
-    private static function encodeArray(array $data, $indent) {
+    private function encodeObject(object $data, $indent): string
+    {
+        if ($data instanceof \stdClass) {
+            return $this->encodeArray((array) $data, $indent);
+        }
+
+        if (is_iterable($data)) {
+            return $this->encodeArray(iterator_to_array($data), $indent);
+        }
+
+        if ($data instanceof Arrayable) {
+            return $this->encodeArray($data->toArray(), $indent);
+        }
+
+        throw new \InvalidArgumentException(
+            "Cannot encode object " . get_class($data) . ": " . var_export($data, true)
+        );
+    }
+
+    private function encodeArray(array $data, $indent): string
+    {
         if (count($data) === 0) {
             return '{}';
         }
@@ -50,19 +64,20 @@ class Serializer {
         foreach ($data as $key => $value) {
             if (is_int($key)) {
                 $seen[$key] = true;
-                $result .= $subIndent . self::encode($value, $subIndent) . ",\n";
+                $result .= $subIndent . $this->encode($value, $subIndent) . ",\n";
             }
         }
 
         foreach ($data as $key => $value) {
             if (!array_key_exists($key, $seen)) {
-                if (is_string($key)
+                if (
+                    is_string($key)
                     && !in_array($key, Lua::$luaKeywords)
                     && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $key)
                 ) {
-                    $entry = $key . ' = ' . self::encode($value, $subIndent) . ",\n";
+                    $entry = $key . ' = ' . $this->encode($value, $subIndent) . ",\n";
                 } else {
-                    $entry = '[ ' . self::encode($key, $subIndent) . ' ] = ' . self::encode($value, $subIndent) . ",\n";
+                    $entry = '[ ' . $this->encode($key, $subIndent) . ' ] = ' . $this->encode($value, $subIndent) . ",\n";
                 }
                 $result = $result . $subIndent . $entry;
             }
@@ -77,7 +92,8 @@ class Serializer {
      * @see http://luaj.cvs.sourceforge.net/viewvc/luaj/luaj-vm/src/core/org/luaj/vm2/lib/StringLib.java?view=markup
      * @return string
      */
-    private static function encodeString($data) {
+    private function encodeString($data): string
+    {
         $data   = str_replace(["\n\r", "\r\n"], "\n", $data);
         $result = '"';
         for ($i = 0, $n = strlen($data); $i < $n; $i++) {
@@ -107,15 +123,18 @@ class Serializer {
         return $result;
     }
 
-    private static function encodeNumber($data) {
+    private function encodeNumber($data): string
+    {
         return $data;
     }
 
-    private static function encodeBoolean($data) {
+    private function encodeBoolean($data): string
+    {
         return $data ? 'true' : 'false';
     }
 
-    private static function encodeNull() {
+    private function encodeNull(): string
+    {
         return 'nil';
     }
 }

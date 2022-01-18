@@ -1,20 +1,23 @@
 <?php
 
-namespace Vlaswinkel\Lua\AST;
+namespace Kavinsky\Lua\AST;
 
 /**
  * Class NilASTNode
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua\AST
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua\AST
  */
-class NilASTNode extends ASTNode {
+class NilASTNode extends ASTNode
+{
     const NAME = 'nil';
 
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return self::NAME;
     }
 }

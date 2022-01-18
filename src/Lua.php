@@ -1,14 +1,16 @@
 <?php
 
-namespace Vlaswinkel\Lua;
+namespace Kavinsky\Lua;
 
 /**
  * Class Lua
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua
  */
-class Lua {
+class Lua
+{
     public static $luaKeywords = [
         'and',
         'break',
@@ -33,11 +35,13 @@ class Lua {
         'while',
     ];
 
-    public static function serialize($data) {
+    public static function serialize($data)
+    {
         return Serializer::encode($data);
     }
 
-    public static function deserialize($data) {
+    public static function deserialize($data)
+    {
         $parser = new Parser(new TokenStream(new InputStream($data)));
         return LuaToPhpConverter::convertToPhpValue($parser->parse());
     }

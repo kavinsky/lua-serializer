@@ -1,14 +1,14 @@
 <?php
 
-namespace Vlaswinkel\Lua;
+namespace Kavinsky\Lua;
 
-use Vlaswinkel\Lua\AST\ASTNode;
-use Vlaswinkel\Lua\AST\BoolASTNode;
-use Vlaswinkel\Lua\AST\NilASTNode;
-use Vlaswinkel\Lua\AST\NumberASTNode;
-use Vlaswinkel\Lua\AST\StringASTNode;
-use Vlaswinkel\Lua\AST\TableASTNode;
-use Vlaswinkel\Lua\AST\TableEntryASTNode;
+use Kavinsky\Lua\AST\ASTNode;
+use Kavinsky\Lua\AST\BoolASTNode;
+use Kavinsky\Lua\AST\NilASTNode;
+use Kavinsky\Lua\AST\NumberASTNode;
+use Kavinsky\Lua\AST\StringASTNode;
+use Kavinsky\Lua\AST\TableASTNode;
+use Kavinsky\Lua\AST\TableEntryASTNode;
 
 /**
  * Class Parser
@@ -16,9 +16,11 @@ use Vlaswinkel\Lua\AST\TableEntryASTNode;
  * @see     http://lisperator.net/pltut/parser/the-parser
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua
  */
-class Parser {
+class Parser
+{
     /**
      * @var TokenStream
      */
@@ -29,7 +31,8 @@ class Parser {
      *
      * @param TokenStream $input
      */
-    public function __construct(TokenStream $input) {
+    public function __construct(TokenStream $input)
+    {
         $this->input = $input;
     }
 
@@ -38,7 +41,8 @@ class Parser {
      *
      * @throws ParseException
      */
-    public function parse() {
+    public function parse()
+    {
         $result = $this->parseInternal();
 
         if (!$this->input->eof()) {
@@ -60,7 +64,8 @@ class Parser {
      *
      * @throws ParseException
      */
-    protected function parseInternal() {
+    protected function parseInternal()
+    {
         if ($this->isPunctuation('{')) {
             return $this->parseTable();
         }
@@ -91,7 +96,8 @@ class Parser {
     /**
      * @return TableASTNode
      */
-    protected function parseTable() {
+    protected function parseTable()
+    {
         return new TableASTNode(
             $this->delimited(
                 '{',
@@ -105,7 +111,8 @@ class Parser {
     /**
      * @return TableEntryASTNode
      */
-    protected function parseTableEntry() {
+    protected function parseTableEntry()
+    {
         $token = $this->parseInternal();
         if ($this->isPunctuation('=')) {
             $this->skipPunctuation('=');
@@ -121,7 +128,8 @@ class Parser {
     /**
      * @return ASTNode
      */
-    protected function parseTableKey() {
+    protected function parseTableKey()
+    {
         $this->skipPunctuation('[');
         $token = $this->parseInternal();
         $this->skipPunctuation(']');
@@ -136,7 +144,8 @@ class Parser {
      *
      * @return array
      */
-    protected function delimited($start, $stop, $separator, callable $parser) {
+    protected function delimited($start, $stop, $separator, callable $parser)
+    {
         $a     = [];
         $first = true;
         $this->skipPunctuation($start);
@@ -163,7 +172,8 @@ class Parser {
      *
      * @return bool
      */
-    protected function isPunctuation($char = null) {
+    protected function isPunctuation($char = null)
+    {
         $token = $this->input->peek();
         return $token && $token->getType() == Token::TYPE_PUNCTUATION && ($char === null || $token->getValue() == $char);
     }
@@ -173,7 +183,8 @@ class Parser {
      *
      * @throws ParseException
      */
-    protected function skipPunctuation($char = null) {
+    protected function skipPunctuation($char = null)
+    {
         if ($this->isPunctuation($char)) {
             $this->input->next();
         } else {
@@ -184,7 +195,8 @@ class Parser {
     /**
      * @throws ParseException
      */
-    protected function unexpected() {
+    protected function unexpected()
+    {
         $this->input->error('Unexpected token: ' . json_encode($this->input->peek()));
     }
 }

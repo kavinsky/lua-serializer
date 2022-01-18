@@ -1,5 +1,5 @@
 {
-    "name": "koesie10/lua-serializer",
+    "name": "kavinsky/lua-serializer",
     "keywords": [
         "lua",
         "serializer",
@@ -7,37 +7,48 @@
         "deserialization",
         "parser"
     ],
-    "description": "A Lua serializer/deserializer",
+    "description": "A PHP8.0+ Lua serializer/deserializer with support for Symfony Serializer component.",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Koen Vlaswinkel",
             "email": "koen@vlaswinkel.info"
+        },
+        {
+            "name": "Ignacio Muñoz Fernandez",
+            "email": "nmunozfernandez@gmail.com"
         }
     ],
     "require": {
-        "php": ">=5.4"
+        "php": "^8.0",
+        "illuminate/contracts": "dev-master"
     },
     "require-dev": {
-        "php": ">=5.5",
-        "jms/serializer": "~1.1",
-        "phpunit/phpunit": "~4.4",
-        "symfony/form": "~2.8",
-        "symfony/validator": "~2.8",
-        "doctrine/common": "~2.6"
+        "friendsofphp/php-cs-fixer": "^3.5",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-mock": "^1.0",
+        "symfony/serializer": "^6.0"
     },
     "suggest": {
-        "jms/serializer": "Used to serialize/deserialize in e.g. Symfony2."
+        "symfony/serializer": "If you want to use with Symfony Serializer component."
     },
     "autoload": {
         "psr-4": {
-            "Vlaswinkel\\Lua\\": "src"
+            "Kavinsky\\Lua\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Vlaswinkel\\Lua\\Tests\\": "tests"
+            "Kavinsky\\Lua\\Tests\\": "tests"
         }
+    },
+    "scripts": {
+        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage"
+    },
+    "config": {
+        "sort-packages": true
     }
 }

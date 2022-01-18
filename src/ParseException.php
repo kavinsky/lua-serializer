@@ -1,6 +1,6 @@
 <?php
 
-namespace Vlaswinkel\Lua;
+namespace Kavinsky\Lua;
 
 use Exception;
 
@@ -8,9 +8,11 @@ use Exception;
  * Class ParseException
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua
  */
-class ParseException extends \RuntimeException {
+class ParseException extends \RuntimeException
+{
     /**
      * Construct the exception. Note: The message is NOT binary safe.
      *
@@ -22,7 +24,8 @@ class ParseException extends \RuntimeException {
      *
      * @since 5.1.0
      */
-    public function __construct($message = "", $code = 0, Exception $previous = null) {
+    public function __construct($message = "", $code = 0, Exception $previous = null)
+    {
         parent::__construct($message, $code, $previous);
     }
 }

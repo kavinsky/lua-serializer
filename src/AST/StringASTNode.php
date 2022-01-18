@@ -1,14 +1,16 @@
 <?php
 
-namespace Vlaswinkel\Lua\AST;
+namespace Kavinsky\Lua\AST;
 
 /**
  * Class StringASTNode
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua\AST
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua\AST
  */
-class StringASTNode extends LiteralASTNode {
+class StringASTNode extends LiteralASTNode
+{
     const NAME = 'string';
 
     /**
@@ -21,21 +23,24 @@ class StringASTNode extends LiteralASTNode {
      *
      * @param string $value
      */
-    public function __construct($value) {
+    public function __construct($value)
+    {
         $this->value = $value;
     }
 
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return self::NAME;
     }
 
     /**
      * @return string
      */
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 }

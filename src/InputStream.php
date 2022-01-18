@@ -1,6 +1,6 @@
 <?php
 
-namespace Vlaswinkel\Lua;
+namespace Kavinsky\Lua;
 
 /**
  * Class InputStream
@@ -8,37 +8,41 @@ namespace Vlaswinkel\Lua;
  * @see     http://lisperator.net/pltut/parser/input-stream
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua
  */
-class InputStream {
+class InputStream
+{
     /**
      * @var string
      */
-    private $input;
+    private string $input;
 
     /**
      * @var int
      */
-    private $position = 0;
+    private int $position = 0;
     /**
      * @var int
      */
-    private $line = 1;
+    private int $line = 1;
     /**
      * @var int
      */
-    private $column = 0;
+    private int $column = 0;
 
     /**
      * InputStream constructor.
      *
      * @param string $input
      */
-    public function __construct($input) {
+    public function __construct(string $input)
+    {
         $this->input = $input;
     }
 
-    public function next() {
+    public function next(): string
+    {
         $char = $this->input[$this->position++];
         if ($char == "\n") {
             $this->line++;
@@ -49,18 +53,24 @@ class InputStream {
         return $char;
     }
 
-    public function peek($pos = 0) {
+    /**
+     * @throws ParseException
+     */
+    public function peek($pos = 0): string
+    {
         if ($this->eof($pos)) {
             $this->error('Unexpected end of input');
         }
         return $this->input[$this->position + $pos];
     }
 
-    public function eof($pos = 0) {
+    public function eof($pos = 0)
+    {
         return $this->position + $pos >= strlen($this->input);
     }
 
-    public function error($msg) {
+    public function error($msg)
+    {
         throw new ParseException($msg . ' (' . $this->line . ':' . $this->column . ')');
     }
 }

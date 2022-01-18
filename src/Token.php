@@ -1,14 +1,16 @@
 <?php
 
-namespace Vlaswinkel\Lua;
+namespace Kavinsky\Lua;
 
 /**
  * Class Token
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua
  */
-class Token {
+class Token
+{
     const TYPE_STRING = 1;
     const TYPE_NUMBER = 2;
     const TYPE_PUNCTUATION = 3;
@@ -30,7 +32,8 @@ class Token {
      * @param int    $type
      * @param string $value
      */
-    public function __construct($type, $value) {
+    public function __construct($type, $value)
+    {
         $this->type  = $type;
         $this->value = $value;
     }
@@ -38,14 +41,16 @@ class Token {
     /**
      * @return int
      */
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
     /**
      * @return string
      */
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 }

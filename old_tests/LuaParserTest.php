@@ -1,24 +1,27 @@
 <?php
 
-namespace Vlaswinkel\Lua\Tests;
+namespace Kavinsky\Lua\Tests;
 
-use Vlaswinkel\Lua\AST\BoolASTNode;
-use Vlaswinkel\Lua\AST\NilASTNode;
-use Vlaswinkel\Lua\AST\NumberASTNode;
-use Vlaswinkel\Lua\AST\StringASTNode;
-use Vlaswinkel\Lua\AST\TableASTNode;
-use Vlaswinkel\Lua\InputStream;
-use Vlaswinkel\Lua\Parser;
-use Vlaswinkel\Lua\TokenStream;
+use Kavinsky\Lua\AST\BoolASTNode;
+use Kavinsky\Lua\AST\NilASTNode;
+use Kavinsky\Lua\AST\NumberASTNode;
+use Kavinsky\Lua\AST\StringASTNode;
+use Kavinsky\Lua\AST\TableASTNode;
+use Kavinsky\Lua\InputStream;
+use Kavinsky\Lua\Parser;
+use Kavinsky\Lua\TokenStream;
 
 /**
  * Class LuaParserTest
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua\Tests
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua\Tests
  */
-class LuaParserTest extends \PHPUnit_Framework_TestCase {
-    public function testString() {
+class LuaParserTest extends \PHPUnit_Framework_TestCase
+{
+    public function testString()
+    {
         $parser = new Parser(new TokenStream(new InputStream('"foo"')));
 
         $node = $parser->parse();
@@ -28,7 +31,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("foo", $node->getValue());
     }
 
-    public function testStringWithSpaces() {
+    public function testStringWithSpaces()
+    {
         $parser = new Parser(new TokenStream(new InputStream('"foo bar."')));
 
         $node = $parser->parse();
@@ -38,7 +42,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("foo bar.", $node->getValue());
     }
 
-    public function testAlternateString() {
+    public function testAlternateString()
+    {
         $parser = new Parser(new TokenStream(new InputStream('[[foo]]')));
 
         $node = $parser->parse();
@@ -49,7 +54,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
     }
 
     // https://github.com/koesie10/LuaSerializer/issues/1
-    public function testAlternateStringWithSpaces() {
+    public function testAlternateStringWithSpaces()
+    {
         $parser = new Parser(new TokenStream(new InputStream('[[foo bar.]]')));
 
         $node = $parser->parse();
@@ -59,7 +65,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("foo bar.", $node->getValue());
     }
 
-    public function testNumber() {
+    public function testNumber()
+    {
         $parser = new Parser(new TokenStream(new InputStream('1337')));
 
         $node = $parser->parse();
@@ -69,7 +76,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(1337, $node->getValue());
     }
 
-    public function testNil() {
+    public function testNil()
+    {
         $parser = new Parser(new TokenStream(new InputStream('nil')));
 
         $node = $parser->parse();
@@ -78,7 +86,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf(NilASTNode::class, $node);
     }
 
-    public function testBoolTrue() {
+    public function testBoolTrue()
+    {
         $parser = new Parser(new TokenStream(new InputStream('true')));
 
         $node = $parser->parse();
@@ -88,7 +97,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(true, $node->getValue());
     }
 
-    public function testBoolFalse() {
+    public function testBoolFalse()
+    {
         $parser = new Parser(new TokenStream(new InputStream('false')));
 
         $node = $parser->parse();
@@ -98,7 +108,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(false, $node->getValue());
     }
 
-    public function testTableKey() {
+    public function testTableKey()
+    {
         $parser = new Parser(new TokenStream(new InputStream('["test"]')));
 
         $node = $parser->parse();
@@ -108,7 +119,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("test", $node->getValue());
     }
 
-    public function testSimpleTable() {
+    public function testSimpleTable()
+    {
         $parser = new Parser(
             new TokenStream(
                 new InputStream(
@@ -137,7 +149,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $entry->getValue()->getValue());
     }
 
-    public function testNestedTable() {
+    public function testNestedTable()
+    {
         $parser = new Parser(
             new TokenStream(
                 new InputStream(
@@ -198,7 +211,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("bar", $nestedNestedEntry2->getValue()->getValue());
     }
 
-    public function testTableWithNestedAlternateStrings() {
+    public function testTableWithNestedAlternateStrings()
+    {
         $parser = new Parser(
             new TokenStream(
                 new InputStream(
@@ -228,25 +242,28 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException \Vlaswinkel\Lua\ParseException
+     * @expectedException \Kavinsky\Lua\ParseException
      */
-    public function testInvalid() {
+    public function testInvalid()
+    {
         $parser = new Parser(new TokenStream(new InputStream('{ test[bar }')));
 
         $parser->parse();
     }
 
     /**
-     * @expectedException \Vlaswinkel\Lua\ParseException
+     * @expectedException \Kavinsky\Lua\ParseException
      */
-    public function testInvalidKeyword() {
+    public function testInvalidKeyword()
+    {
         $parser  = new Parser(new TokenStream(new InputStream('function')));
 
         $node = $parser->parse();
         $this->assertEquals('test', $node->getName());
     }
 
-    public function testComments() {
+    public function testComments()
+    {
         $parser = new Parser(new TokenStream(new InputStream('{
         -- comment
     foo = {
@@ -257,7 +274,8 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $parser->parse();
     }
 
-    public function testInlineComments() {
+    public function testInlineComments()
+    {
         $parser = new Parser(new TokenStream(new InputStream('{
     foo = {
         test = 123 -- comment
@@ -267,13 +285,15 @@ class LuaParserTest extends \PHPUnit_Framework_TestCase {
         $parser->parse();
     }
 
-    public function testAdvancedTable() {
+    public function testAdvancedTable()
+    {
         $parser = new Parser(new TokenStream(new InputStream(file_get_contents(__DIR__ . '/advanced-test.lua'))));
 
         $parser->parse();
     }
 
-    public function testTableWithTrailingSemiColon() {
+    public function testTableWithTrailingSemiColon()
+    {
         $parser = new Parser(new TokenStream(new InputStream('{
     A = "B",
     C = [=[ D ]=]

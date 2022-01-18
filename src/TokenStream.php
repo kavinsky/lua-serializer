@@ -1,6 +1,6 @@
 <?php
 
-namespace Vlaswinkel\Lua;
+namespace Kavinsky\Lua;
 
 /**
  * Class TokenStream
@@ -8,9 +8,11 @@ namespace Vlaswinkel\Lua;
  * @see     http://lisperator.net/pltut/parser/token-stream
  *
  * @author  Koen Vlaswinkel <koen@vlaswinkel.info>
- * @package Vlaswinkel\Lua
+ * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
+ * @package Kavinsky\Lua
  */
-class TokenStream {
+class TokenStream
+{
     private $current = null;
     /**
      * @var InputStream
@@ -22,14 +24,16 @@ class TokenStream {
      *
      * @param InputStream $input
      */
-    public function __construct(InputStream $input) {
+    public function __construct(InputStream $input)
+    {
         $this->input = $input;
     }
 
     /**
      * @return Token
      */
-    public function next() {
+    public function next()
+    {
         $token         = $this->current;
         $this->current = null;
         if ($token) {
@@ -41,14 +45,16 @@ class TokenStream {
     /**
      * @return bool
      */
-    public function eof() {
+    public function eof()
+    {
         return $this->peek() == null;
     }
 
     /**
      * @return Token
      */
-    public function peek() {
+    public function peek()
+    {
         if ($this->current) {
             return $this->current;
         }
@@ -61,7 +67,8 @@ class TokenStream {
      *
      * @throws ParseException
      */
-    public function error($msg) {
+    public function error($msg)
+    {
         $this->input->error($msg);
     }
 
@@ -69,7 +76,8 @@ class TokenStream {
      * @return Token
      * @throws ParseException
      */
-    protected function readNext() {
+    protected function readNext()
+    {
         $this->readWhile([$this, 'isWhitespace']);
         if ($this->input->eof()) {
             return null;
@@ -107,7 +115,8 @@ class TokenStream {
         $this->input->error('Cannot handle character: ' . $char . ' (ord: ' . ord($char) . ')');
     }
 
-    protected function skipComment() {
+    protected function skipComment()
+    {
         $this->readWhile(
             function ($char) {
                 return $char != "\n";
@@ -121,21 +130,24 @@ class TokenStream {
     /**
      * @return Token
      */
-    protected function readDoubleQuotedString() {
+    protected function readDoubleQuotedString()
+    {
         return new Token(Token::TYPE_STRING, $this->readEscaped('"'));
     }
 
     /**
      * @return Token
      */
-    protected function readSingleQuotedString() {
+    protected function readSingleQuotedString()
+    {
         return new Token(Token::TYPE_STRING, $this->readEscaped('\''));
     }
 
     /**
      * @return Token
      */
-    protected function readDoubleBracketString() {
+    protected function readDoubleBracketString()
+    {
         // we cannot use readEscaped because it only supports a single char as $end
         // and we do not support escaping in double bracke strings
         $str                      = "";
@@ -192,7 +204,8 @@ class TokenStream {
      *
      * @return string
      */
-    protected function readEscaped($end) {
+    protected function readEscaped($end)
+    {
         $escaped = false;
         $str     = "";
         $this->input->next();
@@ -235,7 +248,8 @@ class TokenStream {
     /**
      * @return Token
      */
-    protected function readNumber() {
+    protected function readNumber()
+    {
         $isNegative = false;
 
         if ($this->input->peek() === '-') {
@@ -265,7 +279,8 @@ class TokenStream {
         return new Token(Token::TYPE_NUMBER, $number);
     }
 
-    private function readNumberValue() {
+    private function readNumberValue()
+    {
         $hasDot = false;
         $number = $this->readWhile(
             function ($char) use (&$hasDot) {
@@ -283,7 +298,8 @@ class TokenStream {
         return $hasDot ? floatval($number) : intval($number);
     }
 
-    private function readHexValue() {
+    private function readHexValue()
+    {
         $number = $this->readWhile([$this, 'isHexDigit']);
 
         return hexdec($number);
@@ -292,7 +308,8 @@ class TokenStream {
     /**
      * @return Token
      */
-    protected function readIdentifier() {
+    protected function readIdentifier()
+    {
         $first      = false;
         $identifier = $this->readWhile(
             function ($char) use (&$first) {
@@ -312,7 +329,8 @@ class TokenStream {
     /**
      * @return Token
      */
-    protected function readPunctuation() {
+    protected function readPunctuation()
+    {
         return new Token(Token::TYPE_PUNCTUATION, $this->input->next());
     }
 
@@ -321,7 +339,8 @@ class TokenStream {
      *
      * @return string
      */
-    protected function readWhile(callable $predicate) {
+    protected function readWhile(callable $predicate)
+    {
         $str = "";
         while (!$this->input->eof() && call_user_func($predicate, $this->input->peek())) {
             $str .= $this->input->next();
@@ -334,7 +353,8 @@ class TokenStream {
      *
      * @return bool
      */
-    protected function isWhitespace($char) {
+    protected function isWhitespace($char)
+    {
         return strpos(" \t\n\r", $char) !== false;
     }
 
@@ -343,7 +363,8 @@ class TokenStream {
      *
      * @return bool
      */
-    protected function isDigit($char) {
+    protected function isDigit($char)
+    {
         return is_numeric($char);
     }
 
@@ -352,21 +373,24 @@ class TokenStream {
      *
      * @return bool
      */
-    protected function isHexDigit($char) {
+    protected function isHexDigit($char)
+    {
         return $this->isDigit($char) || preg_match('/[a-fA-F]/', $char) === 1;
     }
 
     /**
      * @return bool
      */
-    protected function isDoubleBracketString() {
+    protected function isDoubleBracketString()
+    {
         return $this->input->peek() == '[' && !$this->input->eof(1) && ($this->input->peek(1) == '[' || $this->input->peek(1) == '=');
     }
 
     /**
      * @return bool
      */
-    protected function isComment() {
+    protected function isComment()
+    {
         return $this->input->peek() == '-' && !$this->input->eof(1) && $this->input->peek(1) == '-';
     }
 
@@ -375,7 +399,8 @@ class TokenStream {
      *
      * @return bool
      */
-    protected function isStartIdentifierCharacter($char) {
+    protected function isStartIdentifierCharacter($char)
+    {
         return preg_match('/[a-zA-Z_]/', $char) === 1;
     }
 
@@ -384,7 +409,8 @@ class TokenStream {
      *
      * @return bool
      */
-    protected function isIdentifierCharacter($char) {
+    protected function isIdentifierCharacter($char)
+    {
         return preg_match('/[a-zA-Z0-9_]/', $char) === 1;
     }
 
@@ -393,7 +419,8 @@ class TokenStream {
      *
      * @return bool
      */
-    protected function isPunctuation($char) {
+    protected function isPunctuation($char)
+    {
         return strpos(",{}=[]", $char) !== false;
     }
 
@@ -402,7 +429,8 @@ class TokenStream {
      *
      * @return bool
      */
-    protected function isKeyword($text) {
+    protected function isKeyword($text)
+    {
         return in_array($text, Lua::$luaKeywords);
     }
 }
