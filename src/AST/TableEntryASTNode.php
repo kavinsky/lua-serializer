@@ -32,7 +32,7 @@ class TableEntryASTNode extends ASTNode
     public function __construct(ASTNode $value, ASTNode $key = null)
     {
         $this->value = $value;
-        $this->key   = $key;
+        $this->key = $key;
     }
 
     /**

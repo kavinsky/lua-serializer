@@ -34,11 +34,12 @@ class TokenStream
      */
     public function next()
     {
-        $token         = $this->current;
+        $token = $this->current;
         $this->current = null;
         if ($token) {
             return $token;
         }
+
         return $this->readNext();
     }
 
@@ -59,6 +60,7 @@ class TokenStream
             return $this->current;
         }
         $this->current = $this->readNext();
+
         return $this->current;
     }
 
@@ -86,6 +88,7 @@ class TokenStream
         $char = $this->input->peek();
         if ($this->isComment()) {
             $this->skipComment();
+
             return $this->readNext();
         }
 
@@ -119,6 +122,7 @@ class TokenStream
 
         if ($char == ';') {
             $this->input->next(); // skip the semi-colon
+
             return $this->readNext(); // just move on to the next
         }
 
@@ -162,7 +166,7 @@ class TokenStream
     {
         // we cannot use readEscaped because it only supports a single char as $end
         // and we do not support escaping in double bracke strings
-        $str                      = "";
+        $str = "";
         $startNumberOfEqualsSigns = 0;
         // skip both
         $this->input->next();
@@ -191,6 +195,7 @@ class TokenStream
                                 $this->error('Unexpected character \'' . $this->input->peek() . '\', expected \'[\'');
                             }
                             $this->input->next();
+
                             break;
                         } else {
                             $str .= $char . str_repeat('=', $endNumberOfEqualsSigns);
@@ -201,6 +206,7 @@ class TokenStream
                 } else {
                     if ($this->input->peek() == ']') {
                         $this->input->next();
+
                         break;
                     }
                 }
@@ -208,6 +214,7 @@ class TokenStream
                 $str .= $char;
             }
         }
+
         return new Token(Token::TYPE_STRING, $str);
     }
 
@@ -219,7 +226,7 @@ class TokenStream
     protected function readEscaped($end)
     {
         $escaped = false;
-        $str     = "";
+        $str = "";
         $this->input->next();
         while (!$this->input->eof()) {
             $char = $this->input->next();
@@ -227,18 +234,23 @@ class TokenStream
                 switch ($char) {
                     case 'n':
                         $str .= "\n";
+
                         break;
                     case 'r':
                         $str .= "\r";
+
                         break;
                     case 't':
                         $str .= "\t";
+
                         break;
                     case 'v':
                         $str .= "\v";
+
                         break;
                     default:
                         $str .= $char;
+
                         break;
                 }
                 $escaped = false;
@@ -254,6 +266,7 @@ class TokenStream
                 }
             }
         }
+
         return $str;
     }
 
@@ -301,8 +314,10 @@ class TokenStream
                         return false;
                     }
                     $hasDot = true;
+
                     return true;
                 }
+
                 return $this->isDigit($char);
             }
         );
@@ -324,7 +339,7 @@ class TokenStream
     {
         $identifier = $this->readWhile(fn ($char) => $this->isIdentifierCharacter($char));
 
-        if ($this->isKeyword($identifier)) {
+        if (LuaKeywords::tryFrom($identifier)) {
             return new Token(Token::TYPE_KEYWORD, $identifier);
         }
 
@@ -350,6 +365,7 @@ class TokenStream
         while (!$this->input->eof() && call_user_func($predicate, $this->input->peek())) {
             $str .= $this->input->next();
         }
+
         return $str;
     }
 
@@ -427,15 +443,5 @@ class TokenStream
     protected function isPunctuation($char)
     {
         return strpos(",{}=[]", $char) !== false;
-    }
-
-    /**
-     * @param string $text
-     *
-     * @return bool
-     */
-    protected function isKeyword($text)
-    {
-        return in_array($text, Lua::$luaKeywords);
     }
 }

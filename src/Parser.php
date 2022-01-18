@@ -41,7 +41,7 @@ class Parser
      *
      * @throws ParseException
      */
-    public function parse()
+    public function parse(): ASTNode
     {
         $result = $this->parseInternal();
 
@@ -64,7 +64,7 @@ class Parser
      *
      * @throws ParseException
      */
-    protected function parseInternal()
+    protected function parseInternal(): ASTNode
     {
         if ($this->isPunctuation('{')) {
             return $this->parseTable();
@@ -96,7 +96,7 @@ class Parser
     /**
      * @return TableASTNode
      */
-    protected function parseTable()
+    protected function parseTable(): TableASTNode
     {
         return new TableASTNode(
             $this->delimited(
@@ -111,28 +111,32 @@ class Parser
     /**
      * @return TableEntryASTNode
      */
-    protected function parseTableEntry()
+    protected function parseTableEntry(): TableEntryASTNode
     {
         $token = $this->parseInternal();
+
         if ($this->isPunctuation('=')) {
             $this->skipPunctuation('=');
             $value = $this->parseInternal();
+
             return new TableEntryASTNode(
                 $value,
                 $token
             );
         }
+
         return new TableEntryASTNode($token);
     }
 
     /**
      * @return ASTNode
      */
-    protected function parseTableKey()
+    protected function parseTableKey(): ASTNode
     {
         $this->skipPunctuation('[');
         $token = $this->parseInternal();
         $this->skipPunctuation(']');
+
         return $token;
     }
 
@@ -144,26 +148,32 @@ class Parser
      *
      * @return array
      */
-    protected function delimited($start, $stop, $separator, callable $parser)
+    protected function delimited(string $start, string $stop, string $separator, callable $parser): array
     {
-        $a     = [];
+        $a = [];
         $first = true;
         $this->skipPunctuation($start);
+
         while (!$this->input->eof()) {
             if ($this->isPunctuation($stop)) {
                 break;
             }
+
             if ($first) {
                 $first = false;
             } else {
                 $this->skipPunctuation($separator);
             }
+
             if ($this->isPunctuation($stop)) {
                 break;
             }
+
             $a[] = $parser();
         }
+
         $this->skipPunctuation($stop);
+
         return $a;
     }
 
@@ -172,9 +182,10 @@ class Parser
      *
      * @return bool
      */
-    protected function isPunctuation($char = null)
+    protected function isPunctuation(?string $char = null): bool
     {
         $token = $this->input->peek();
+
         return $token && $token->getType() == Token::TYPE_PUNCTUATION && ($char === null || $token->getValue() == $char);
     }
 
@@ -183,7 +194,7 @@ class Parser
      *
      * @throws ParseException
      */
-    protected function skipPunctuation($char = null)
+    protected function skipPunctuation(?string $char = null): void
     {
         if ($this->isPunctuation($char)) {
             $this->input->next();
@@ -195,7 +206,7 @@ class Parser
     /**
      * @throws ParseException
      */
-    protected function unexpected()
+    protected function unexpected(): void
     {
         $this->input->error('Unexpected token: ' . json_encode($this->input->peek()));
     }

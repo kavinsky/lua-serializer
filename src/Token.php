@@ -11,11 +11,11 @@ namespace Kavinsky\Lua;
  */
 class Token
 {
-    const TYPE_STRING = 1;
-    const TYPE_NUMBER = 2;
-    const TYPE_PUNCTUATION = 3;
-    const TYPE_IDENTIFIER = 4;
-    const TYPE_KEYWORD = 5;
+    public const TYPE_STRING = 1;
+    public const TYPE_NUMBER = 2;
+    public const TYPE_PUNCTUATION = 3;
+    public const TYPE_IDENTIFIER = 4;
+    public const TYPE_KEYWORD = 5;
 
     /**
      * @var int
@@ -34,7 +34,7 @@ class Token
      */
     public function __construct($type, $value)
     {
-        $this->type  = $type;
+        $this->type = $type;
         $this->value = $value;
     }
 

@@ -28,7 +28,6 @@ class TableASTNode extends ASTNode
         $this->entries = $entries;
     }
 
-
     /**
      * @return string
      */

@@ -11,5 +11,5 @@ namespace Kavinsky\Lua\AST;
  */
 abstract class LiteralASTNode extends ASTNode
 {
-    public abstract function getValue(): mixed;
+    abstract public function getValue(): mixed;
 }

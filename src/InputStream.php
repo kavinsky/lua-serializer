@@ -50,6 +50,7 @@ class InputStream
         } else {
             $this->column++;
         }
+
         return $char;
     }
 
@@ -61,7 +62,6 @@ class InputStream
     }
 
     /**
-     * @phpstan-inpure
      * @throws ParseException
      */
     public function peek($pos = 0): string
@@ -69,6 +69,7 @@ class InputStream
         if ($this->eof($pos)) {
             $this->error('Unexpected end of input');
         }
+
         return $this->input[$this->position + $pos];
     }
 

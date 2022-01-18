@@ -4,7 +4,6 @@ namespace Kavinsky\Lua\Tests;
 
 use Kavinsky\Lua\InputStream;
 
-
 test('test simple next', function () {
     $obj = new InputStream("a");
     $this->assertEquals("a", $obj->next());

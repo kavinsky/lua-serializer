@@ -2,10 +2,7 @@
 
 namespace Kavinsky\Lua;
 
-use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
-use Iterator;
-use Traversable;
 
 /**
  * Class Serializer
@@ -58,9 +55,9 @@ class Serializer
             return '{}';
         }
 
-        $result    = "{\n";
+        $result = "{\n";
         $subIndent = $indent . '  ';
-        $seen      = [];
+        $seen = [];
         foreach ($data as $key => $value) {
             if (is_int($key)) {
                 $seen[$key] = true;
@@ -72,7 +69,7 @@ class Serializer
             if (!array_key_exists($key, $seen)) {
                 if (
                     is_string($key)
-                    && !in_array($key, Lua::$luaKeywords)
+                    && !LuaKeywords::tryFrom($key)
                     && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $key)
                 ) {
                     $entry = $key . ' = ' . $this->encode($value, $subIndent) . ",\n";
@@ -83,6 +80,7 @@ class Serializer
             }
         }
         $result = $result . $indent . '}';
+
         return $result;
     }
 
@@ -92,7 +90,7 @@ class Serializer
      */
     private function encodeString(string $data): string
     {
-        $data   = str_replace(["\n\r", "\r\n"], "\n", $data);
+        $data = str_replace(["\n\r", "\r\n"], "\n", $data);
         $result = '"';
         for ($i = 0, $n = strlen($data); $i < $n; $i++) {
             $char = $data[$i];
@@ -101,6 +99,7 @@ class Serializer
                 case "\\":
                 case "\n":
                     $result .= "\\" . $char;
+
                     break;
                 default:
                     if (($char <= chr(0x1F) || $char == chr(0x7F)) && $char != chr(9)) {
@@ -118,6 +117,7 @@ class Serializer
             }
         }
         $result .= '"';
+
         return $result;
     }
 

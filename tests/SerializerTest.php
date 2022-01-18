@@ -90,8 +90,7 @@ LUA);
 test('serialize Arrayable', function () {
     $serializer = new Serializer();
 
-    $obj = new class implements \Illuminate\Contracts\Support\Arrayable
-    {
+    $obj = new class () implements \Illuminate\Contracts\Support\Arrayable {
         public function toArray()
         {
             return [
@@ -115,8 +114,7 @@ LUA);
 test('serialize not supported object', function () {
     $serializer = new Serializer();
 
-    $obj = new class
-    {
+    $obj = new class () {
     };
 
     $serializer->encode($obj);

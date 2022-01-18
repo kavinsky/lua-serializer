@@ -14,7 +14,7 @@ class NumberASTNode extends LiteralASTNode
     public const NAME = 'number';
 
     /**
-     * @var integer|float
+     * @var int|float
      */
     private float|int $value;
 
