@@ -9,7 +9,6 @@ use Kavinsky\Lua\TokenStream;
 use Kavinsky\Lua\Unserializer;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
-use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 
 class Encoder implements EncoderInterface, DecoderInterface
 {

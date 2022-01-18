@@ -33,7 +33,7 @@ class Serializer
     }
 
     /**
-     * @param  iterable|Arrayable|\stdClass  $data
+     * @param  iterable|Arrayable|\stdClass|mixed  $data
      * @param string $indent
      * @return string
      */

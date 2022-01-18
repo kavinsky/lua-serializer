@@ -226,7 +226,7 @@ test('invalid', function () {
 })->throws(\Kavinsky\Lua\ParseException::class);
 
 test('invalid keyword', function () {
-    $parser  = new Parser(new TokenStream(new InputStream('function')));
+    $parser = new Parser(new TokenStream(new InputStream('function')));
 
     $node = $parser->parse();
     $this->assertEquals('test', $node->getName());
