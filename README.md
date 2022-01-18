@@ -1,13 +1,8 @@
 # PHP Lua Serializer/Deserializer
 
-[![Build](https://img.shields.io/scrutinizer/build/g/koesie10/LuaSerializer.svg)](https://scrutinizer-ci.com/g/koesie10/LuaSerializer)
-[![Version](https://img.shields.io/packagist/v/koesie10/lua-serializer.svg)](https://packagist.org/packages/koesie10/lua-serializer)
-[![License](https://img.shields.io/packagist/l/koesie10/lua-serializer.svg)](https://packagist.org/packages/koesie10/lua-serializer)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/koesie10/LuaSerializer.svg)](https://scrutinizer-ci.com/g/koesie10/LuaSerializer)
-[![Code Quality](https://img.shields.io/scrutinizer/g/koesie10/LuaSerializer.svg)](https://scrutinizer-ci.com/g/koesie10/LuaSerializer)
-[![Downloads](https://img.shields.io/packagist/dt/koesie10/lua-serializer.svg)](https://packagist.org/packages/koesie10/lua-serializer)
+__This fork is updated to PHP8.1^__
 
-This is a very simple Lua serializer/deserializer for PHP, with support for [JMS Serializer](https://github.com/schmittjoh/serializer).
+This is a very simple Lua serializer/deserializer for PHP, with support for [Symfony Serializer](https://github.com/symfony/serializer).
 
 ## Installation
 
@@ -40,10 +35,10 @@ $result = \Kavinsky\Lua\Lua::deserialize('{ foo = "bar" }')
 You can also use all the classes yourself:
 
 ```php
-$result = \Kavinsky\Lua\Serializer::encode([ 'foo' => 'bar' ]); // returns the same as above
+$result = \Kavinsky\Lua\Serializer::serialize([ 'foo' => 'bar' ]); // returns the same as above
 
 $parser = new \Kavinsky\Lua\Parser(new \Kavinsky\Lua\TokenStream(new \Kavinsky\Lua\InputStream('{ foo = "bar" }')));
-$result = \Kavinsky\Lua\LuaToPhpConverter::convertToPhpValue($parser->parse()); // returns the same as above
+$result = \Kavinsky\Lua\Unserializer::convertToPhpValue($parser->parse()); // returns the same as above
 ```
 
 ### Integration with JMS Serializer in Symfony2

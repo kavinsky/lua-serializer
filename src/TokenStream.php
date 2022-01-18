@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kavinsky\Lua;
 
 /**
@@ -138,7 +140,7 @@ class TokenStream
                 return $char != "\n";
             }
         );
-        if (!$this->input->eof()) {
+        if (! $this->input->eof()) {
             $this->input->next();
         }
     }
@@ -178,7 +180,7 @@ class TokenStream
             $this->error('Unexpected character \'' . $this->input->peek() . '\', expected \'[\'');
         }
         $this->input->next();
-        while (!$this->input->eof()) {
+        while (! $this->input->eof()) {
             $char = $this->input->next();
             if ($char == ']') { // we might have reached the end
                 if ($startNumberOfEqualsSigns != 0) {
@@ -228,7 +230,7 @@ class TokenStream
         $escaped = false;
         $str = "";
         $this->input->next();
-        while (!$this->input->eof()) {
+        while (! $this->input->eof()) {
             $char = $this->input->next();
             if ($escaped) {
                 switch ($char) {
@@ -362,7 +364,7 @@ class TokenStream
     protected function readWhile(callable $predicate)
     {
         $str = "";
-        while (!$this->input->eof() && call_user_func($predicate, $this->input->peek())) {
+        while (! $this->input->eof() && call_user_func($predicate, $this->input->peek())) {
             $str .= $this->input->next();
         }
 
@@ -404,7 +406,7 @@ class TokenStream
      */
     protected function isDoubleBracketString()
     {
-        return $this->input->peek() == '[' && !$this->input->eof(1) && ($this->input->peek(1) == '[' || $this->input->peek(1) == '=');
+        return $this->input->peek() == '[' && ! $this->input->eof(1) && ($this->input->peek(1) == '[' || $this->input->peek(1) == '=');
     }
 
     /**
@@ -412,7 +414,7 @@ class TokenStream
      */
     protected function isComment()
     {
-        return $this->input->peek() == '-' && !$this->input->eof(1) && $this->input->peek(1) == '-';
+        return $this->input->peek() == '-' && ! $this->input->eof(1) && $this->input->peek(1) == '-';
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kavinsky\Lua;
 
 use Kavinsky\Lua\AST\ASTNode;
@@ -15,36 +17,24 @@ use Kavinsky\Lua\AST\TableEntryASTNode;
  * @author  Ignacio Muñoz Fernandez <nmunozfernandez@gmail.com>
  * @package Kavinsky\Lua
  */
-class LuaToPhpConverter
+class Unserializer
 {
-    /**
-     * @param ASTNode $input
-     *
-     * @return array
-     * @throws ParseException
-     */
-    public static function convertToPhpValue($input)
-    {
-        return self::parseValue($input);
-    }
-
     /**
      * @param ASTNode $input
      *
      * @return mixed
      * @throws ParseException
      */
-    private static function parseValue($input)
+    public function unserialize(ASTNode $input): mixed
     {
         if ($input instanceof TableASTNode) {
             return self::parseTable($input);
         }
-        if (! ($input instanceof ASTNode)) {
-            throw new ParseException("Unexpected AST node: " . get_class($input));
-        }
+
         if ($input instanceof LiteralASTNode) {
             return $input->getValue();
         }
+
         if ($input instanceof NilASTNode) {
             return null;
         }
@@ -53,24 +43,20 @@ class LuaToPhpConverter
     }
 
     /**
-     * @param $input
-     *
      * @return array
      * @throws ParseException
      */
-    private static function parseTable($input)
+    private function parseTable(TableASTNode $input): array
     {
         $data = [];
-        if (! ($input instanceof TableASTNode)) {
-            throw new ParseException("Unexpected AST node: " . get_class($input));
-        }
         foreach ($input->getEntries() as $token) {
             if (! ($token instanceof TableEntryASTNode)) {
-                throw new ParseException("Unexpected token: " . $token->getName());
+                throw new ParseException("Unexpected token: " . gettype($token));
             }
-            $value = self::parseValue($token->getValue());
+
+            $value = $this->unserialize($token->getValue());
             if ($token->hasKey()) {
-                $key = self::parseValue($token->getKey());
+                $key = $this->unserialize($token->getKey());
                 $data[$key] = $value;
             } else {
                 $data[] = $value;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kavinsky\Lua;
 
 use Kavinsky\Lua\AST\ASTNode;
@@ -45,7 +47,7 @@ class Parser
     {
         $result = $this->parseInternal();
 
-        if (!$this->input->eof()) {
+        if (! $this->input->eof()) {
             if ($result instanceof StringASTNode && $this->isPunctuation('=')) {
                 $this->skipPunctuation('=');
                 $value = $this->parseInternal();
@@ -88,9 +90,11 @@ class Parser
                 case 'false':
                     return new BoolASTNode(false);
             }
-            $this->input->error('Unexpected keyword: ' . $token->getValue());
+
+            throw new ParseException('Unexpected keyword: ' . $token->getValue());
         }
-        $this->unexpected();
+
+        throw new ParseException('Unexpected token: ' . json_encode($this->input->peek()));
     }
 
     /**
@@ -154,7 +158,7 @@ class Parser
         $first = true;
         $this->skipPunctuation($start);
 
-        while (!$this->input->eof()) {
+        while (! $this->input->eof()) {
             if ($this->isPunctuation($stop)) {
                 break;
             }
@@ -186,7 +190,7 @@ class Parser
     {
         $token = $this->input->peek();
 
-        return $token && $token->getType() == Token::TYPE_PUNCTUATION && ($char === null || $token->getValue() == $char);
+        return $token->getType() == Token::TYPE_PUNCTUATION && ($char === null || $token->getValue() == $char);
     }
 
     /**
@@ -198,16 +202,10 @@ class Parser
     {
         if ($this->isPunctuation($char)) {
             $this->input->next();
-        } else {
-            $this->input->error('Expecting punctuation: "' . $char . '"');
-        }
-    }
 
-    /**
-     * @throws ParseException
-     */
-    protected function unexpected(): void
-    {
-        $this->input->error('Unexpected token: ' . json_encode($this->input->peek()));
+            return;
+        }
+
+        throw new ParseException('Expected punctuation: "' . $char . '"');
     }
 }

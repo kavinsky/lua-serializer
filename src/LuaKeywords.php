@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Kavinsky\Lua;
 
+/**
+ * @codeCoverageIgnore
+ */
 enum LuaKeywords: string
 {
     case AND = 'and';
@@ -12,7 +15,7 @@ enum LuaKeywords: string
     case ELSE = 'else';
     case ELSEIF = 'elseif';
     case END = 'end';
-    case FALSE = 'false';
+    case false = 'false';
     case FOR = 'for';
     case FUNC = 'function';
     case IF = 'if';
@@ -24,7 +27,7 @@ enum LuaKeywords: string
     case REPEAT = 'repeat';
     case RETURN = 'return';
     case THEN = 'then';
-    case TRUE = 'true';
+    case true = 'true';
     case UNTIL = 'until';
     case WHILE = 'while';
 

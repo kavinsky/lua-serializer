@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kavinsky\Lua;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -15,7 +17,7 @@ use Illuminate\Contracts\Support\Arrayable;
  */
 class Serializer
 {
-    public function encode(mixed $data, $indent = ''): string
+    public function serialize(mixed $data, $indent = ''): string
     {
         return match (gettype($data)) {
             'NULL' => $this->encodeNull(),
@@ -30,14 +32,19 @@ class Serializer
         };
     }
 
-    private function encodeObject(object $data, $indent): string
+    /**
+     * @param  iterable|Arrayable|\stdClass  $data
+     * @param string $indent
+     * @return string
+     */
+    private function encodeObject(mixed $data, string $indent = ''): string
     {
-        if ($data instanceof \stdClass) {
-            return $this->encodeArray((array) $data, $indent);
-        }
-
         if (is_iterable($data)) {
             return $this->encodeArray(iterator_to_array($data), $indent);
+        }
+
+        if ($data instanceof \stdClass) {
+            return $this->encodeArray((array) $data, $indent);
         }
 
         if ($data instanceof Arrayable) {
@@ -61,27 +68,26 @@ class Serializer
         foreach ($data as $key => $value) {
             if (is_int($key)) {
                 $seen[$key] = true;
-                $result .= $subIndent . $this->encode($value, $subIndent) . ",\n";
+                $result .= $subIndent . $this->serialize($value, $subIndent) . ",\n";
             }
         }
 
         foreach ($data as $key => $value) {
-            if (!array_key_exists($key, $seen)) {
+            if (! array_key_exists($key, $seen)) {
                 if (
                     is_string($key)
-                    && !LuaKeywords::tryFrom($key)
+                    && ! LuaKeywords::tryFrom($key)
                     && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $key)
                 ) {
-                    $entry = $key . ' = ' . $this->encode($value, $subIndent) . ",\n";
+                    $entry = $key . ' = ' . $this->serialize($value, $subIndent) . ",\n";
                 } else {
-                    $entry = '[ ' . $this->encode($key, $subIndent) . ' ] = ' . $this->encode($value, $subIndent) . ",\n";
+                    $entry = '[ ' . $this->serialize($key, $subIndent) . ' ] = ' . $this->serialize($value, $subIndent) . ",\n";
                 }
                 $result = $result . $subIndent . $entry;
             }
         }
-        $result = $result . $indent . '}';
 
-        return $result;
+        return $result . $indent . '}';
     }
 
     /**
@@ -123,7 +129,7 @@ class Serializer
 
     private function encodeNumber($data): string
     {
-        return $data;
+        return (string) $data;
     }
 
     private function encodeBoolean($data): string

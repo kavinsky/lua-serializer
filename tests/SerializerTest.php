@@ -7,40 +7,40 @@ use Kavinsky\Lua\Serializer;
 test('serialize null', function () {
     $serializer = new Serializer();
 
-    expect($serializer->encode(null))
+    expect($serializer->serialize(null))
         ->toBe('nil');
 });
 
 test('serialize string', function () {
     $serializer = new Serializer();
 
-    expect($serializer->encode('im a string'))
+    expect($serializer->serialize('im a string'))
         ->toBe('"im a string"');
 
-    expect($serializer->encode("im a string\n im a string"))
+    expect($serializer->serialize("im a string\n im a string"))
         ->toBe(<<<LUA
 "im a string\\
  im a string"
 LUA);
 
-    expect($serializer->encode(chr(0x1F) . chr(0x7F)))
+    expect($serializer->serialize(chr(0x1F) . chr(0x7F)))
         ->toBe('"\\' . chr(0x1F) . '\\' . chr(0x7F) . '"');
 });
 
 test('serialize numbers', function () {
     $serializer = new Serializer();
 
-    expect($serializer->encode(0.69))
+    expect($serializer->serialize(0.69))
         ->toBe('0.69');
 
-    expect($serializer->encode(69))
+    expect($serializer->serialize(69))
         ->toBe('69');
 });
 
 test('serialize array', function () {
     $serializer = new Serializer();
 
-    expect($serializer->encode(['im', 'an', 'array']))
+    expect($serializer->serialize(['im', 'an', 'array']))
         ->toBe(<<<LUA
 {
   "im",
@@ -49,7 +49,7 @@ test('serialize array', function () {
 }
 LUA);
 
-    expect($serializer->encode([]))
+    expect($serializer->serialize([]))
         ->toBe('{}');
 });
 
@@ -59,7 +59,7 @@ test('serialize stdObject', function () {
     $obj = new \stdClass();
     $obj->foo = 'bar';
     $obj->{'foo.bar'} = 'baz';
-    expect($serializer->encode($obj))
+    expect($serializer->serialize($obj))
         ->toBe(<<<LUA
 {
   foo = "bar",
@@ -77,7 +77,7 @@ test('serialize iterables', function () {
         'iterables',
     ]);
 
-    expect($serializer->encode($obj))
+    expect($serializer->serialize($obj))
         ->toBe(<<<LUA
 {
   "iterables",
@@ -101,7 +101,7 @@ test('serialize Arrayable', function () {
         }
     };
 
-    expect($serializer->encode($obj))
+    expect($serializer->serialize($obj))
         ->toBe(<<<LUA
 {
   "iterables",
@@ -117,17 +117,17 @@ test('serialize not supported object', function () {
     $obj = new class () {
     };
 
-    $serializer->encode($obj);
+    $serializer->serialize($obj);
 })->throws(\InvalidArgumentException::class);
 
 
 test('serialize boolean', function () {
     $serializer = new Serializer();
 
-    expect($serializer->encode(true))
+    expect($serializer->serialize(true))
         ->toBe('true');
 
-    expect($serializer->encode(false))
+    expect($serializer->serialize(false))
         ->toBe('false');
 });
 
@@ -136,5 +136,5 @@ test('serialize resource', function () {
 
     $serializer = new Serializer();
 
-    $serializer->encode($resource);
+    $serializer->serialize($resource);
 })->throws(\InvalidArgumentException::class, 'Cannot encode type resource: NULL');
