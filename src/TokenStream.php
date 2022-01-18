@@ -73,46 +73,58 @@ class TokenStream
     }
 
     /**
-     * @return Token
+     * @return Token|null
      * @throws ParseException
      */
-    protected function readNext()
+    protected function readNext(): ?Token
     {
         $this->readWhile([$this, 'isWhitespace']);
         if ($this->input->eof()) {
             return null;
         }
+
         $char = $this->input->peek();
         if ($this->isComment()) {
             $this->skipComment();
             return $this->readNext();
         }
+
         if ($char == '"') {
             return $this->readDoubleQuotedString();
         }
+
         if ($char == '\'') {
             return $this->readSingleQuotedString();
         }
+
         if ($this->isDoubleBracketString()) {
             return $this->readDoubleBracketString();
         }
+
         if ($this->isDigit($char)) {
             return $this->readNumber();
         }
+
         if ($char === '-') {
             return $this->readNumber();
         }
+
         if ($this->isStartIdentifierCharacter($char)) {
             return $this->readIdentifier();
         }
+
         if ($this->isPunctuation($char)) {
             return $this->readPunctuation();
         }
+
         if ($char == ';') {
             $this->input->next(); // skip the semi-colon
             return $this->readNext(); // just move on to the next
         }
+
         $this->input->error('Cannot handle character: ' . $char . ' (ord: ' . ord($char) . ')');
+
+        return null;
     }
 
     protected function skipComment()
@@ -260,8 +272,8 @@ class TokenStream
         if ($this->input->peek() === '0') {
             // there is no octal support according to to https://www.lua.org/manual/5.3/manual.html#3.1,
             // so we can just skip a 0
-            $this->input->next();
-            if ($this->input->peek() === 'x') {
+
+            if ($this->input->nextAndPeek() === 'x') {
                 $this->input->next();
 
                 $number = $this->readHexValue();
@@ -310,19 +322,12 @@ class TokenStream
      */
     protected function readIdentifier()
     {
-        $first      = false;
-        $identifier = $this->readWhile(
-            function ($char) use (&$first) {
-                if ($first) {
-                    $first = false;
-                    return $this->isStartIdentifierCharacter($char);
-                }
-                return $this->isIdentifierCharacter($char);
-            }
-        );
+        $identifier = $this->readWhile(fn ($char) => $this->isIdentifierCharacter($char));
+
         if ($this->isKeyword($identifier)) {
             return new Token(Token::TYPE_KEYWORD, $identifier);
         }
+
         return new Token(Token::TYPE_IDENTIFIER, $identifier);
     }
 

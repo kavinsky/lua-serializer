@@ -11,12 +11,12 @@ namespace Kavinsky\Lua\AST;
  */
 class NilASTNode extends ASTNode
 {
-    const NAME = 'nil';
+    public const NAME = 'nil';
 
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

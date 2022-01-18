@@ -11,7 +11,7 @@ namespace Kavinsky\Lua\AST;
  */
 class BoolASTNode extends LiteralASTNode
 {
-    const NAME = 'bool';
+    public const NAME = 'bool';
 
     /**
      * @var bool
@@ -31,7 +31,7 @@ class BoolASTNode extends LiteralASTNode
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
@@ -39,7 +39,7 @@ class BoolASTNode extends LiteralASTNode
     /**
      * @return bool
      */
-    public function getValue()
+    public function getValue(): bool
     {
         return $this->value;
     }

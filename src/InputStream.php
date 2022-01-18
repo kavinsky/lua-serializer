@@ -53,7 +53,15 @@ class InputStream
         return $char;
     }
 
+    public function nextAndPeek(int $pos = 0): string
+    {
+        $this->next();
+
+        return $this->peek($pos);
+    }
+
     /**
+     * @phpstan-inpure
      * @throws ParseException
      */
     public function peek($pos = 0): string
@@ -64,11 +72,17 @@ class InputStream
         return $this->input[$this->position + $pos];
     }
 
+    /**
+     *
+     */
     public function eof($pos = 0)
     {
         return $this->position + $pos >= strlen($this->input);
     }
 
+    /**
+     * @throws ParseException
+     */
     public function error($msg)
     {
         throw new ParseException($msg . ' (' . $this->line . ':' . $this->column . ')');

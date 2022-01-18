@@ -11,12 +11,12 @@ namespace Kavinsky\Lua\AST;
  */
 class StringASTNode extends LiteralASTNode
 {
-    const NAME = 'string';
+    public const NAME = 'string';
 
     /**
      * @var string
      */
-    private $value;
+    private string $value;
 
     /**
      * StringASTNode constructor.
@@ -31,7 +31,7 @@ class StringASTNode extends LiteralASTNode
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
@@ -39,7 +39,7 @@ class StringASTNode extends LiteralASTNode
     /**
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }

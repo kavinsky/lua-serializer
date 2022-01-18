@@ -87,12 +87,10 @@ class Serializer
     }
 
     /**
-     * @param $data
-     *
      * @see http://luaj.cvs.sourceforge.net/viewvc/luaj/luaj-vm/src/core/org/luaj/vm2/lib/StringLib.java?view=markup
      * @return string
      */
-    private function encodeString($data): string
+    private function encodeString(string $data): string
     {
         $data   = str_replace(["\n\r", "\r\n"], "\n", $data);
         $result = '"';

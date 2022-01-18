@@ -11,19 +11,19 @@ namespace Kavinsky\Lua\AST;
  */
 class NumberASTNode extends LiteralASTNode
 {
-    const NAME = 'number';
+    public const NAME = 'number';
 
     /**
      * @var integer|float
      */
-    private $value;
+    private float|int $value;
 
     /**
      * NumberASTNode constructor.
      *
      * @param float|int $value
      */
-    public function __construct($value)
+    public function __construct(float|int $value)
     {
         $this->value = $value;
     }
@@ -31,7 +31,7 @@ class NumberASTNode extends LiteralASTNode
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
@@ -39,7 +39,7 @@ class NumberASTNode extends LiteralASTNode
     /**
      * @return float|int
      */
-    public function getValue()
+    public function getValue(): float|int
     {
         return $this->value;
     }

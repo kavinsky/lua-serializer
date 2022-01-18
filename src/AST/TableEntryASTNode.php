@@ -11,16 +11,17 @@ namespace Kavinsky\Lua\AST;
  */
 class TableEntryASTNode extends ASTNode
 {
-    const NAME = 'table_entry';
+    public const NAME = 'table_entry';
 
     /**
      * @var ASTNode|null
      */
-    private $key;
+    private ?ASTNode $key;
+
     /**
      * @var ASTNode
      */
-    private $value;
+    private ASTNode $value;
 
     /**
      * TableEntryASTNode constructor.
@@ -37,7 +38,7 @@ class TableEntryASTNode extends ASTNode
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
@@ -45,7 +46,7 @@ class TableEntryASTNode extends ASTNode
     /**
      * @return null|ASTNode
      */
-    public function getKey()
+    public function getKey(): ?ASTNode
     {
         return $this->key;
     }
@@ -53,7 +54,7 @@ class TableEntryASTNode extends ASTNode
     /**
      * @return ASTNode
      */
-    public function getValue()
+    public function getValue(): ASTNode
     {
         return $this->value;
     }
@@ -61,7 +62,7 @@ class TableEntryASTNode extends ASTNode
     /**
      * @return bool
      */
-    public function hasKey()
+    public function hasKey(): bool
     {
         return $this->key !== null;
     }
