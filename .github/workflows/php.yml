@@ -46,5 +46,5 @@ jobs:
       - name: PHPStan Analysis
         run: vendor/bin/phpstan analyse
 
-      - name: Test with Kahlan
+      - name: Unit testing
         run: vendor/bin/pestphp
