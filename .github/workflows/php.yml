@@ -47,4 +47,4 @@ jobs:
         run: vendor/bin/phpstan analyse
 
       - name: Unit testing
-        run: vendor/bin/pestphp
+        run: vendor/bin/pest
