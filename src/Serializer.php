@@ -104,8 +104,8 @@ class Serializer
         }
 
         foreach ($data as $key => $value) {
-            if (!array_key_exists($key, $seen)) {
-                if ($this->hasFlag(self::FLAG_TABLE_KEY_AS_STRING) || !$this->isTableKey($key)) {
+            if (! array_key_exists($key, $seen)) {
+                if ($this->hasFlag(self::FLAG_TABLE_KEY_AS_STRING) || ! $this->isTableKey($key)) {
                     $entry = $openBracket . $this->serialize($key, $subIndent) . $closeBraket . ' = ' . $this->serialize($value, $subIndent) . ",\n";
                 } else {
                     $entry = $key . ' = ' . $this->serialize($value, $subIndent) . ",\n";
@@ -172,7 +172,7 @@ class Serializer
     private function isTableKey(string $key): bool
     {
         return is_string($key)
-            && !LuaKeywords::tryFrom($key)
+            && ! LuaKeywords::tryFrom($key)
             && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $key);
     }
 
