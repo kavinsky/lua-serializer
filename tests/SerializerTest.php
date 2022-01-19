@@ -138,3 +138,39 @@ test('serialize resource', function () {
 
     $serializer->serialize($resource);
 })->throws(\InvalidArgumentException::class, 'Cannot encode type resource: NULL');
+
+test('serialize array with flag FLAG_TABLE_KEY_AS_STRING', function () {
+    $serializer = new Serializer([
+        Serializer::FLAG_TABLE_KEY_AS_STRING,
+    ]);
+
+    expect($serializer->serialize(['test' => 'im', 'an', 'array']))
+        ->toBe(<<<LUA
+{
+  "an",
+  "array",
+  [ "test" ] = "im",
+}
+LUA);
+
+    expect($serializer->serialize([]))
+        ->toBe('{}');
+});
+
+test('serialize array with flag FLAG_REMOVE_KEY_PADDING', function () {
+    $serializer = new Serializer([
+        Serializer::FLAG_REMOVE_KEY_PADDING,
+    ]);
+
+    expect($serializer->serialize(['test.test' => 'im', 'an', 'array']))
+        ->toBe(<<<LUA
+{
+  "an",
+  "array",
+  ["test.test"] = "im",
+}
+LUA);
+
+    expect($serializer->serialize([]))
+        ->toBe('{}');
+});

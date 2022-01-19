@@ -17,6 +17,28 @@ use Illuminate\Contracts\Support\Arrayable;
  */
 class Serializer
 {
+    /**
+     * Force all table keys to be in [ "key" ] format.
+     */
+    public const FLAG_TABLE_KEY_AS_STRING = 2;
+
+    /**
+     * Remove spaces between [ "key" ] in tables.
+     */
+    public const FLAG_REMOVE_KEY_PADDING = 4;
+
+    /**
+     * Set of flags used by the serializer.
+     *
+     * @param int[] $flags
+     */
+    private array $flags = [];
+
+    public function __construct(array $flags = [])
+    {
+        $this->flags = $flags;
+    }
+
     public function serialize(mixed $data, $indent = ''): string
     {
         return match (gettype($data)) {
@@ -62,6 +84,15 @@ class Serializer
             return '{}';
         }
 
+        $openBracket = '[ ';
+        $closeBraket = ' ]';
+
+        if ($this->hasFlag(self::FLAG_REMOVE_KEY_PADDING)) {
+            $openBracket = '[';
+            $closeBraket = ']';
+        }
+
+
         $result = "{\n";
         $subIndent = $indent . '  ';
         $seen = [];
@@ -74,14 +105,10 @@ class Serializer
 
         foreach ($data as $key => $value) {
             if (! array_key_exists($key, $seen)) {
-                if (
-                    is_string($key)
-                    && ! LuaKeywords::tryFrom($key)
-                    && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $key)
-                ) {
-                    $entry = $key . ' = ' . $this->serialize($value, $subIndent) . ",\n";
+                if ($this->hasFlag(self::FLAG_TABLE_KEY_AS_STRING) || ! $this->isTableKey($key)) {
+                    $entry = $openBracket . $this->serialize($key, $subIndent) . $closeBraket . ' = ' . $this->serialize($value, $subIndent) . ",\n";
                 } else {
-                    $entry = '[ ' . $this->serialize($key, $subIndent) . ' ] = ' . $this->serialize($value, $subIndent) . ",\n";
+                    $entry = $key . ' = ' . $this->serialize($value, $subIndent) . ",\n";
                 }
                 $result = $result . $subIndent . $entry;
             }
@@ -140,5 +167,17 @@ class Serializer
     private function encodeNull(): string
     {
         return 'nil';
+    }
+
+    private function isTableKey(string $key): bool
+    {
+        return is_string($key)
+            && ! LuaKeywords::tryFrom($key)
+            && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $key);
+    }
+
+    private function hasFlag(int $flag): bool
+    {
+        return in_array($flag, $this->flags);
     }
 }
