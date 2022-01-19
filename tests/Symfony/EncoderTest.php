@@ -6,7 +6,6 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Kavinsky\Lua\Tests\Symfony\DummyObject;
 use Kavinsky\Lua\Tests\Symfony\DummySubObject;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
@@ -56,7 +55,7 @@ test('symfony/serializer serialize', function () {
     $obj->setDummyInt(1);
     $obj->setDummyString('foo');
     $obj->setDummyArray([
-        'test.test' => 'test'
+        'test.test' => 'test',
     ]);
     $subObj = new DummySubObject();
     $subObj->setMegaString('TEST');
@@ -99,7 +98,7 @@ test('symfony/serializer deserialize', function () {
     $expected->setDummyInt(1);
     $expected->setDummyString('foo');
     $expected->setDummyArray([
-        'test.test' => 'test'
+        'test.test' => 'test',
     ]);
 
     $serialized = <<<LUA
