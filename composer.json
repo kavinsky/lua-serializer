@@ -33,6 +33,7 @@
         "phpstan/phpstan": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",
+        "symfony/property-access": "^6.0",
         "symfony/serializer": "^6.0"
     },
     "suggest": {
