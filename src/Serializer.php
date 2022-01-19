@@ -17,7 +17,14 @@ use Illuminate\Contracts\Support\Arrayable;
  */
 class Serializer
 {
+    /**
+     * Force all table keys to be in [ "key" ] format.
+     */
     public const FLAG_TABLE_KEY_AS_STRING = 2;
+
+    /**
+     * Remove spaces between [ "key" ] in tables.
+     */
     public const FLAG_REMOVE_KEY_PADDING = 4;
 
     /**
